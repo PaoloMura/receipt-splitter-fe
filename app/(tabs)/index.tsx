@@ -20,7 +20,7 @@ enum Page {
 }
 
 export default function ImagePickerExample() {
-  const [people, setPeope] = React.useState<string[]>([]);
+  const [people, setPeople] = React.useState<string[]>([]);
   const [items, setItems] = React.useState<Item[]>([]);
   const [selectedPerson, setSelectedPerson] = React.useState<string | null>(
     null
@@ -29,7 +29,13 @@ export default function ImagePickerExample() {
 
   switch (page) {
     case Page.CREATE_GROUP:
-      return <CreateGroup />;
+      return (
+        <CreateGroup
+          people={people}
+          setPeople={setPeople}
+          onNext={() => setPage(Page.UPLOAD_RECEIPT)}
+        />
+      );
     case Page.UPLOAD_RECEIPT:
       return <UploadReceipt />;
     case Page.EDIT_ITEMS:

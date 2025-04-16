@@ -1,12 +1,17 @@
+import Button from "@/components/Button";
+import IconButton from "@/components/IconButton";
 import { InputRow } from "@/components/InputRow";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-export default function CreateGroup() {
-  const [people, setPeople] = React.useState<string[]>([""]);
+type CreateGroupProps = {
+  people: string[];
+  setPeople: (people: string[]) => void;
+  onNext: () => void;
+};
+
+export default function CreateGroup({ people, setPeople, onNext }: CreateGroupProps) {
 
   const updateName = (index: number, name: string) => {
     const updatedPeople = [...people];
@@ -25,13 +30,9 @@ export default function CreateGroup() {
 
   return (
     <View style={styles.container}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Create a group</ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="subtitle">Add people to the group</ThemedText>
-      </ThemedView>
+      <ThemedText type="title">Create a group</ThemedText>
+      
+      <ThemedText type="default">Add people to the group</ThemedText>
 
       {people.map((person, index) => (
         <InputRow
@@ -42,16 +43,9 @@ export default function CreateGroup() {
         />
       ))}
 
-      <TouchableOpacity onPress={addName} style={styles.iconButton}>
-        <FontAwesome name="plus" size={24} color="white" />
-      </TouchableOpacity>
+      <IconButton onPress={addName} name="plus" />
 
-      <Pressable
-        onPress={() => console.log("Upload receipt")}
-        style={styles.button}
-      >
-        <ThemedText type="link">Upload receipt</ThemedText>
-      </Pressable>
+      <Button onPress={onNext} label="Next" />
     </View>
   );
 }
