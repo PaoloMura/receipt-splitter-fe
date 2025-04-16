@@ -4,6 +4,7 @@ import SelectInput from "@/components/SelectInput";
 import { ThemedText } from "@/components/ThemedText";
 import { styles } from "@/constants/styles";
 import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 type SelectItemsProps = {
   person: string;
@@ -37,7 +38,7 @@ export default function SelectItems({
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <ThemedText type="title">{person}</ThemedText>
       <ThemedText type="default">Choose the items you consumed:</ThemedText>
 
@@ -51,6 +52,6 @@ export default function SelectItems({
       ))}
 
       <Button label="Next" onPress={onNext} />
-    </View>
+    </ScrollView>
   );
 }
