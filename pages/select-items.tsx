@@ -2,9 +2,7 @@ import { Item } from "@/app/(tabs)";
 import Button from "@/components/Button";
 import SelectInput from "@/components/SelectInput";
 import { ThemedText } from "@/components/ThemedText";
-import { styles } from "@/constants/styles";
-import { View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 
 type SelectItemsProps = {
   person: string;
@@ -38,20 +36,39 @@ export default function SelectItems({
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ThemedText type="title">{person}</ThemedText>
-      <ThemedText type="default">Choose the items you consumed:</ThemedText>
+    <SafeAreaView style={styles2.safeArea}>
+      <ScrollView contentContainerStyle={styles2.scrollViewContent}>
+        <View style={styles2.container}>
+          <ThemedText type="title">{person}</ThemedText>
+          <ThemedText type="default">Choose the items you consumed:</ThemedText>
 
-      {filteredItems.map((item, index) => (
-        <SelectInput
-          key={index}
-          label={item.label}
-          checked={item.name === person}
-          onPress={() => updateItem(item.index)}
-        />
-      ))}
+          {filteredItems.map((item, index) => (
+            <SelectInput
+              key={index}
+              label={item.label}
+              checked={item.name === person}
+              onPress={() => updateItem(item.index)}
+            />
+          ))}
 
-      <Button label="Next" onPress={onNext} />
-    </ScrollView>
+          <Button label="Next" onPress={onNext} />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles2 = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1, // Ensures the content stretches to fit the screen
+    justifyContent: "center", // Adjust alignment as needed
+    padding: 16, // Add padding for better spacing
+  },
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
