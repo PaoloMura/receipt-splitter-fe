@@ -22,16 +22,23 @@ enum Page {
 export default function ImagePickerExample() {
   const [people, setPeople] = React.useState<string[]>([]);
   const [items, setItems] = React.useState<Item[]>([]);
-  const [selectedPerson, setSelectedPerson] = React.useState<string | null>(
-    null
-  );
+  const [selectedPerson, setSelectedPerson] = React.useState(0);
   const [page, setPage] = React.useState<Page>(Page.CREATE_GROUP);
 
   const handleReset = () => {
     setPeople([]);
     setItems([]);
-    setSelectedPerson(null);
+    setSelectedPerson(0);
     setPage(Page.CREATE_GROUP);
+  };
+
+  const handleNextPerson = () => {
+    if (selectedPerson === people.length - 1) {
+      setPage(Page.SHOW_TOTALS);
+      return;
+    }
+
+    setSelectedPerson((p) => p + 1);
   };
 
   switch (page) {
@@ -53,7 +60,14 @@ export default function ImagePickerExample() {
     case Page.EDIT_ITEMS:
       return <EditItems />;
     case Page.SELECT_ITEMS:
-      return <SelectItems />;
+      return (
+        <SelectItems
+          person={people[selectedPerson]}
+          items={items}
+          setItems={setItems}
+          onNext={handleNextPerson}
+        />
+      );
     case Page.SHOW_TOTALS:
       return <ShowTotals people={people} items={items} onNext={handleReset} />;
     default:
