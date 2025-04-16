@@ -58,7 +58,11 @@ export default function ImagePickerExample() {
         />
       );
     case Page.EDIT_ITEMS:
-      return <EditItems />;
+      return <EditItems 
+      items={items}
+      setItems={setItems}
+      onNext={() => setPage(Page.SELECT_ITEMS)}
+      />;
     case Page.SELECT_ITEMS:
       return (
         <SelectItems
