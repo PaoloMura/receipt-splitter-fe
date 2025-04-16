@@ -27,6 +27,13 @@ export default function ImagePickerExample() {
   );
   const [page, setPage] = React.useState<Page>(Page.CREATE_GROUP);
 
+  const handleReset = () => {
+    setPeople([]);
+    setItems([]);
+    setSelectedPerson(null);
+    setPage(Page.CREATE_GROUP);
+  };
+
   switch (page) {
     case Page.CREATE_GROUP:
       return (
@@ -52,7 +59,7 @@ export default function ImagePickerExample() {
     case Page.SELECT_ITEMS:
       return <SelectItems />;
     case Page.SHOW_TOTALS:
-      return <ShowTotals />;
+      return <ShowTotals people={people} items={items} onNext={handleReset} />;
     default:
       return null;
   }
