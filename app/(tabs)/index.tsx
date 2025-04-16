@@ -5,7 +5,7 @@ import EditItems from "@/pages/edit-items";
 import SelectItems from "@/pages/select-items";
 import ShowTotals from "@/pages/show-totals";
 
-type Item = {
+export type Item = {
   name: string;
   label: string;
   cost: string;
@@ -37,7 +37,12 @@ export default function ImagePickerExample() {
         />
       );
     case Page.UPLOAD_RECEIPT:
-      return <UploadReceipt />;
+      return (
+        <UploadReceipt
+          setItems={setItems}
+          onNext={() => setPage(Page.EDIT_ITEMS)}
+        />
+      );
     case Page.EDIT_ITEMS:
       return <EditItems />;
     case Page.SELECT_ITEMS:

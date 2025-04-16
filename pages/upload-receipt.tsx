@@ -1,15 +1,29 @@
 import Button from "@/components/Button";
-import IconButton from "@/components/IconButton";
-import { InputRow } from "@/components/InputRow";
-import SelectInput from "@/components/SelectInput";
 import { ThemedText } from "@/components/ThemedText";
 import { styles } from "@/constants/styles";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { Item } from "@/app/(tabs)";
 
-export default function UploadReceipt() {
+type UploadReceiptProps = {
+  setItems: (items: Item[]) => void;
+  onNext: () => void;
+};
+
+type ItemResponse = {
+  label: string;
+  cost: string;
+  quantity: number;
+};
+
+export default function UploadReceipt({
+  setItems,
+  onNext,
+}: UploadReceiptProps) {
   const [image, setImage] = React.useState<string | null>(null);
+  const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -27,57 +41,78 @@ export default function UploadReceipt() {
     }
   };
 
-  const submitImage = async () => {
-    const response = await fetch("http://127.0.0.1:5000/upload-receipt", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        image,
-      }),
-    });
+  useEffect(() => {
+    const submitImage = async () => {
+      const response = await fetch("http://127.0.0.1:5000/upload-receipt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          image,
+        }),
+      });
 
-    if (!response.ok) {
-      console.log("Error fetching image:", response.statusText);
-    } else {
-      console.log("Image fetched successfully");
+      if (!response.ok) {
+        console.log("Error fetching image:", response.statusText);
+        setLoading(false);
+        setError(true);
+      } else {
+        console.log("Image fetched successfully");
 
-      const data = await response.json();
-      console.log("data:", data);
+        const data = await response.json();
+        console.log("data:", data);
+
+        const formattedItems: Item[] = [];
+
+        for (const item of data) {
+          for (const _ of Array(item.quantity).fill(0)) {
+            formattedItems.push({
+              name: "",
+              label: item.label,
+              cost: item.cost,
+            });
+          }
+        }
+
+        setItems(formattedItems);
+
+        onNext();
+      }
+    };
+
+    if (loading) {
+      submitImage();
     }
+  }, [loading]);
+
+  const onSubmit = () => {
+    setError(false);
+    setLoading(true);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ThemedText type="subtitle">Loading...</ThemedText>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <ThemedText type="title">Create group</ThemedText>
-      <ThemedText type="default">Add people to your group:</ThemedText>
-      <InputRow
-        label="Ben owes £"
-        value="4.0"
-        setValue={(value) => console.log("Set value", value)}
-        onRemove={() => console.log("Remove value")}
-      />
-      <IconButton name="plus" onPress={() => console.log("Remove")} />
-      <SelectInput
-        label="Paolo"
-        checked
-        onPress={() => console.log("Press Paolo")}
-      />
-      <SelectInput
-        label="Faieq"
-        checked={false}
-        onPress={() => console.log("Press Faieq")}
-      />
-      <Button
-        label="Pick an image from camera roll"
-        onPress={pickImage}
-        variant="primary"
-      />
+      <ThemedText type="title">Upload receipt</ThemedText>
+
+      <ThemedText type="default">
+        Choose an image from your camera roll:
+      </ThemedText>
+
+      <Button label="Pick an image" onPress={pickImage} variant="primary" />
+
       {image && (
         <>
           <Image source={{ uri: image }} style={styles.image} />
-          <Button label="Submit image" onPress={submitImage} />
+          <Button label="Submit image" onPress={onSubmit} />
         </>
       )}
     </View>
